@@ -7,7 +7,7 @@ from fastapi.staticfiles import StaticFiles
 
 from backend.config import settings, DATA_DIR
 from backend.database import init_db
-from backend.routers import projects
+from backend.routers import projects, runs, issues, pages, scenarios, baselines, reports, demo
 from demo_site.server import app as demo_app
 
 @asynccontextmanager
@@ -40,6 +40,13 @@ app.mount("/demo", demo_app)
 
 # Register API routers
 app.include_router(projects.router)
+app.include_router(runs.router)
+app.include_router(issues.router)
+app.include_router(pages.router)
+app.include_router(scenarios.router)
+app.include_router(baselines.router)
+app.include_router(reports.router)
+app.include_router(demo.router)
 
 @app.get("/api/health")
 async def health_check():
