@@ -8,6 +8,7 @@ from fastapi.staticfiles import StaticFiles
 from backend.config import settings, DATA_DIR
 from backend.database import init_db
 from backend.routers import projects
+from demo_site.server import app as demo_app
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -33,6 +34,9 @@ app.add_middleware(
 
 # Mount artifact files (screenshots, traces, reports, baselines)
 app.mount("/artifacts", StaticFiles(directory=str(DATA_DIR)), name="artifacts")
+
+# Mount demo site internally for convenient single-server testing
+app.mount("/demo", demo_app)
 
 # Register API routers
 app.include_router(projects.router)

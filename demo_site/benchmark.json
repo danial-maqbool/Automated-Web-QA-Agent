@@ -1,0 +1,77 @@
+{
+  "version": "1.0",
+  "site_name": "WebQA Test Ground Benchmark",
+  "base_url": "http://127.0.0.1:8080",
+  "expected_defects": {
+    "broken_links": [
+      {
+        "url": "http://127.0.0.1:8080/broken-page",
+        "expected_status": 404,
+        "rule_id": "LINK_HTTP_404"
+      }
+    ],
+    "broken_images": [
+      {
+        "selector": "img.broken-img-fixture",
+        "src": "/static/images/does-not-exist.jpg",
+        "rule_id": "IMG_BROKEN_SRC"
+      }
+    ],
+    "console_errors": [
+      {
+        "message_contains": "calculateTotal",
+        "rule_id": "CONSOLE_UNCAUGHT_ERR"
+      }
+    ],
+    "network_failures": [
+      {
+        "endpoint": "/api/simulate-500",
+        "expected_status": 500,
+        "rule_id": "NET_STATUS_5XX"
+      }
+    ],
+    "accessibility_violations": [
+      {
+        "rule_id": "image-alt",
+        "impact": "critical",
+        "element": "img.missing-alt-fixture"
+      },
+      {
+        "rule_id": "button-name",
+        "impact": "critical",
+        "element": "button.empty-button-fixture"
+      }
+    ],
+    "responsive_overflow": [
+      {
+        "viewport": "390x844",
+        "rule_id": "LAYOUT_HORIZ_OVERFLOW",
+        "offending_selector": "#overflowing-banner"
+      },
+      {
+        "viewport": "375x812",
+        "rule_id": "LAYOUT_HORIZ_OVERFLOW",
+        "offending_selector": "#overflowing-banner"
+      }
+    ],
+    "form_validation_defects": [
+      {
+        "form_selector": "#buggy-contact-form",
+        "rule_id": "FORM_REQ_EMPTY_SUBMIT",
+        "issue": "Form submits successfully with empty required fields"
+      }
+    ],
+    "blocked_actions": [
+      {
+        "selector": "#btn-delete-account",
+        "text": "Delete Account",
+        "expected_classification": "BLOCKED"
+      },
+      {
+        "selector": "#btn-pay-now",
+        "text": "Pay Now ($99)",
+        "expected_classification": "BLOCKED"
+      }
+    ]
+  }
+}
