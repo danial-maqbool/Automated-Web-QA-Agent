@@ -13,9 +13,20 @@ from backend.services.orchestrator import QAOrchestrator
 from backend.services.reporter import QAReporter
 from backend.config import DATA_DIR
 
+import socket
+
+def get_free_port():
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.bind(('127.0.0.1', 0))
+    port = s.getsockname()[1]
+    s.close()
+    return port
+
+TEST_PORT = get_free_port()
+
 @pytest.fixture(scope="module", autouse=True)
 def run_test_server():
-    config = uvicorn.Config("backend.main:app", host="127.0.0.1", port=8000, log_level="warning")
+    config = uvicorn.Config("backend.main:app", host="127.0.0.1", port=TEST_PORT, log_level="warning")
     server = uvicorn.Server(config)
     thread = threading.Thread(target=server.run, daemon=True)
     thread.start()
@@ -37,7 +48,7 @@ async def test_end_to_end_benchmark_validation():
     await init_db()
 
     # 2. Setup benchmark project pointing to local demo site
-    demo_url = "http://127.0.0.1:8000/demo/"
+    demo_url = f"http://127.0.0.1:{TEST_PORT}/demo/"
     proj_name = f"E2E Benchmark {time.time()}"
     async with AsyncSessionLocal() as db:
         proj = Project(
@@ -76,7 +87,7 @@ async def test_end_to_end_benchmark_validation():
     completed_run = await orchestrator.execute_scan(project_id)
 
     # 4. Verify run completion and telemetry
-    assert completed_run.status == "COMPLETED"
+    assert completed_run.status == "COMPLETED", f"Run failed with: {completed_run.error_message}"
     assert completed_run.pages_tested >= 4
     assert completed_run.total_issues > 0
 

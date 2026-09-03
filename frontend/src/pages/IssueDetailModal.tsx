@@ -30,6 +30,14 @@ export const IssueDetailModal: React.FC<IssueDetailModalProps> = ({
   const [copied, setCopied] = useState(false);
   const [updating, setUpdating] = useState(false);
 
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [onClose]);
+
   const handleStatusChange = async (newStatus: string) => {
     setUpdating(true);
     try {

@@ -11,10 +11,21 @@ class BrowserManager:
     def __init__(self):
         self._playwright: Optional[Playwright] = None
         self._browsers: Dict[str, Browser] = {}
-        self._lock = asyncio.Lock()
+        self._loop = None
+        self._lock: Optional[asyncio.Lock] = None
+
+    def _get_lock(self) -> asyncio.Lock:
+        curr_loop = asyncio.get_running_loop()
+        if self._lock is None or self._loop != curr_loop:
+            self._lock = asyncio.Lock()
+            self._loop = curr_loop
+            self._playwright = None
+            self._browsers = {}
+        return self._lock
 
     async def get_playwright(self) -> Playwright:
-        async with self._lock:
+        lock = self._get_lock()
+        async with lock:
             if self._playwright is None:
                 self._playwright = await async_playwright().start()
             return self._playwright
@@ -31,8 +42,9 @@ class BrowserManager:
         p = await self.get_playwright()
         b_name = browser_name.lower()
         key = f"{b_name}_{headless}_{slow_mo}"
+        lock = self._get_lock()
 
-        async with self._lock:
+        async with lock:
             if key not in self._browsers or not self._browsers[key].is_connected():
                 if b_name == "firefox":
                     browser_type = p.firefox
@@ -123,7 +135,8 @@ class BrowserManager:
         """
         Gracefully terminates all active browsers and the Playwright driver.
         """
-        async with self._lock:
+        lock = self._get_lock()
+        async with lock:
             for browser in self._browsers.values():
                 try:
                     if browser.is_connected():
