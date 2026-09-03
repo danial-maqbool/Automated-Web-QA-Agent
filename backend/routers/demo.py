@@ -14,7 +14,7 @@ async def trigger_one_click_demo(background_tasks: BackgroundTasks, db: AsyncSes
     """
     Sets up the bundled demo website project and starts an automated QA scan.
     """
-    demo_url = f"http://{settings.HOST}:{settings.PORT}/demo"
+    demo_url = f"http://{settings.HOST}:{settings.PORT}/demo/"
 
     # Check or create demo project
     proj_res = await db.execute(select(Project).where(Project.name == "WebQA Benchmark Demo"))

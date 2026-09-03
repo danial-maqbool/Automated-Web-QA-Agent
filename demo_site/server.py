@@ -22,22 +22,22 @@ def render_layout(title: str, content: str, active_nav: str = "") -> str:
   <meta property="og:title" content="{title}">
   <meta property="og:description" content="Benchmark test website containing intentional QA defects.">
   <title>{title} | WebQA Ground</title>
-  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="stylesheet" href="./static/css/style.css">
 </head>
 <body>
   <header>
     <div>
-      <a href="/" style="font-weight: 700; font-size: 1.25rem; color: #2563eb; text-decoration: none;">
+      <a href="/demo" style="font-weight: 700; font-size: 1.25rem; color: #2563eb; text-decoration: none;">
         WebQA Ground
       </a>
     </div>
     <nav>
-      <a href="/" class="{'active' if active_nav == 'home' else ''}">Home</a>
-      <a href="/about" class="{'active' if active_nav == 'about' else ''}">About</a>
-      <a href="/pricing" class="{'active' if active_nav == 'pricing' else ''}">Pricing</a>
-      <a href="/contact" class="{'active' if active_nav == 'contact' else ''}">Contact</a>
-      <a href="/visual-fixture" class="{'active' if active_nav == 'visual' else ''}">Visual Fixture</a>
-      <a href="/broken-page" style="color: #ef4444;">Broken Link (404)</a>
+      <a href="/demo" class="{'active' if active_nav == 'home' else ''}">Home</a>
+      <a href="/demo/about" class="{'active' if active_nav == 'about' else ''}">About</a>
+      <a href="/demo/pricing" class="{'active' if active_nav == 'pricing' else ''}">Pricing</a>
+      <a href="/demo/contact" class="{'active' if active_nav == 'contact' else ''}">Contact</a>
+      <a href="/demo/visual-fixture" class="{'active' if active_nav == 'visual' else ''}">Visual Fixture</a>
+      <a href="/demo/broken-page" style="color: #ef4444;">Broken Link (404)</a>
     </nav>
   </header>
   <main class="container">
@@ -61,13 +61,13 @@ async def home_page():
     <div class="card">
       <h2>Image Assets</h2>
       <p>Valid Image:</p>
-      <img src="/static/images/logo.png" alt="Company Logo" width="100" height="30">
+      <img src="./static/images/logo.png" alt="Company Logo" width="100" height="30">
       
       <p style="margin-top: 1rem;">Broken Image (Intentional Defect):</p>
-      <img class="broken-img-fixture" src="/static/images/does-not-exist.jpg" alt="Non-existent graphic" width="100" height="30">
+      <img class="broken-img-fixture" src="./static/images/does-not-exist.jpg" alt="Non-existent graphic" width="100" height="30">
       
       <p style="margin-top: 1rem;">Accessibility Defect (Missing Alt Text):</p>
-      <img class="missing-alt-fixture" src="/static/images/logo.png" width="100" height="30">
+      <img class="missing-alt-fixture" src="./static/images/logo.png" width="100" height="30">
     </div>
 
     <!-- Defect 2: Accessibility Empty Button & Dead Button -->
@@ -98,7 +98,7 @@ async def home_page():
         }
         async function triggerApiError() {
           try {
-            const res = await fetch('/api/simulate-500');
+            const res = await fetch('./api/simulate-500');
             const data = await res.json();
             document.getElementById('api-status').innerText = 'API Failed with: ' + data.error;
           } catch (e) {
@@ -198,7 +198,7 @@ async def contact_page():
         function handleContactSubmit(e) {
           e.preventDefault();
           // Intentionally does NOT validate that name or email are provided!
-          fetch('/api/submit-contact', {
+          fetch('./api/submit-contact', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({

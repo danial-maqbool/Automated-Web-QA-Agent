@@ -35,6 +35,12 @@ app.add_middleware(
 # Mount artifact files (screenshots, traces, reports, baselines)
 app.mount("/artifacts", StaticFiles(directory=str(DATA_DIR)), name="artifacts")
 
+from fastapi.responses import RedirectResponse
+
+@app.get("/demo")
+async def demo_root_redirect():
+    return RedirectResponse(url="/demo/")
+
 # Mount demo site internally for convenient single-server testing
 app.mount("/demo", demo_app)
 

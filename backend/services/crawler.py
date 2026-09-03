@@ -116,7 +116,8 @@ class PageCrawler:
         self.queue: List[Dict[str, Any]] = [] # [{"url": ..., "depth": 0, "parent": None}]
 
     def enqueue(self, raw_url: str, depth: int = 0, parent: Optional[str] = None) -> Optional[str]:
-        norm = normalize_url(raw_url, self.base_url)
+        resolution_base = parent or self.base_url
+        norm = normalize_url(raw_url, resolution_base)
         if not norm:
             return None
 
@@ -136,12 +137,16 @@ class PageCrawler:
             return None
 
         self.discovered_urls.add(norm)
-        self.queue.append({"url": norm, "depth": depth, "parent": parent})
+        self.queue.append({
+            "url": norm,
+            "depth": depth,
+            "parent": parent
+        })
         return norm
 
     async def fetch_sitemap_urls(self) -> List[str]:
         """
-        Attempts to discover URLs from sitemap.xml on the target host.
+        Attempts to discover pages from /sitemap.xml if reachable.
         """
         sitemap_url = urljoin(self.base_url, "/sitemap.xml")
         found = []
@@ -165,11 +170,11 @@ class PageCrawler:
         """
         discovered = []
         try:
-            # Extract anchor hrefs and button links from DOM
+            # Extract browser-resolved hrefs from DOM
             hrefs = await page.eval_on_selector_all(
                 "a[href], button[data-href], [role='link'][href]",
                 """elements => elements.map(el => {
-                    if (el.tagName === 'A') return el.getAttribute('href') || el.href;
+                    if (el.tagName === 'A') return el.href || el.getAttribute('href');
                     if (el.getAttribute('data-href')) return el.getAttribute('data-href');
                     return el.getAttribute('href');
                 }).filter(Boolean)"""
