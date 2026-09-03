@@ -5,7 +5,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
-from backend.config import settings, DATA_DIR
+from backend.config import settings, DATA_DIR, FRONTEND_DIST
 from backend.database import init_db
 from backend.routers import projects, runs, issues, pages, scenarios, baselines, reports, demo
 from demo_site.server import app as demo_app
@@ -58,7 +58,5 @@ async def health_check():
         "data_directory": str(DATA_DIR)
     }
 
-# Frontend static serving if built
-frontend_dist = Path("frontend/dist")
-if frontend_dist.exists():
-    app.mount("/", StaticFiles(directory=str(frontend_dist), html=True), name="frontend")
+if FRONTEND_DIST.exists():
+    app.mount("/", StaticFiles(directory=str(FRONTEND_DIST), html=True), name="frontend")

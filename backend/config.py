@@ -31,6 +31,8 @@ class Settings(BaseSettings):
 settings = Settings()
 
 # Ensure runtime directories exist
-DATA_DIR = Path(settings.DATA_DIRECTORY)
+BASE_DIR = Path(__file__).resolve().parent.parent
+DATA_DIR = BASE_DIR / "data"
+FRONTEND_DIST = BASE_DIR / "frontend" / "dist"
 for subdir in ["screenshots", "traces", "videos", "reports", "baselines", "auth"]:
     (DATA_DIR / subdir).mkdir(parents=True, exist_ok=True)
